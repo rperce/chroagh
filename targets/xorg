@@ -49,7 +49,8 @@ intelhasfbc=''
 pinmesa=''
 intelfbcsupport='y'
 if [ "${ARCH#arm}" = "$ARCH" ]; then
-    inteldriver="xserver-xorg-video-intel$backport"
+    #inteldriver="xserver-xorg-video-intel$backport"
+    inteldriver="xf86-video-intel"
 
     # If the system has an Intel FBC-capable video card but has too old a driver
     # to support the chipset, we'll need to disable hardware acceleration.
@@ -63,19 +64,20 @@ if [ "${ARCH#arm}" = "$ARCH" ]; then
     # On saucy onwards, if kernel version is 3.4, manually pin down old mesa
     # libraries, as new ones require version >=3.6 (see issue #704).
     # This is only required on non-Atom Intel chipsets (Atom uses i915 dri driver)
-    if release -ge saucy && uname -r | grep -q "^3.4." &&
-            ! grep -q 0xa0 /sys/class/graphics/fb0/device/device; then
-        pinmesa='y'
-    fi
+    #if release -ge saucy && uname -r | grep -q "^3.4." &&
+    #        ! grep -q 0xa0 /sys/class/graphics/fb0/device/device; then
+    #    pinmesa='y'
+    #fi
 
     # Unhold xserver-xorg-video-intel, modification will be reapplied later.
-    apt-mark unhold "$inteldriver" 2>/dev/null || true
+    #apt-mark unhold "$inteldriver" 2>/dev/null || true
 fi
 
 # Catalog relevant and irrelevant video drivers
 # Debian sid has modesetting built into xserver-xorg-core
-fbdev="xserver-xorg-video-fbdev$backport"
-modesetting="xserver-xorg-video-modesetting$backport,debian~sid+ubuntu~vivid="
+#fbdev="xserver-xorg-video-fbdev$backport"
+fbdev="xf86-video-fbdev"
+modesetting="xorg-server"
 installvideodrivers=''
 removevideodrivers=''
 if [ -n "$freon" ]; then
@@ -233,11 +235,11 @@ if [ -n "$freon" -a -e "$inteldrv" ]; then
                                conv=notrunc,nocreat 2>/dev/null
     fi
 
-    if grep -F -q -a 'getuid0' "$inteldrv" 2>/dev/null; then
-        # Hold xserver-xorg-video-intel to make sure that the modification
-        # (which may have been made in a previous update) does not get erased.
-        apt-mark hold "$inteldriver"
-    fi
+    #if grep -F -q -a 'getuid0' "$inteldrv" 2>/dev/null; then
+    #    # Hold xserver-xorg-video-intel to make sure that the modification
+    #    # (which may have been made in a previous update) does not get erased.
+    #    apt-mark hold "$inteldriver"
+    #fi
 fi
 
 TIPS="$TIPS
